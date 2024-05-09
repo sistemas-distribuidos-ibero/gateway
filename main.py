@@ -160,6 +160,82 @@ def delete_category(category_id):
     response = delete(os.environ['PRODUCT_SERVICE']+f'/api/v1/categories/{category_id}')
     return jsonify(response.json()), response.status_code
 
+# /api/v1/
+# user endpoints --------
+@app.route('/users/create', methods=['POST'])
+def create_user():
+    data = request.json
+    # consume the service
+    response = post(os.environ['USER_SERVICE']+'/api/v1/users/create', json=data)
+    return jsonify(response.json()), response.status_code
+
+
+# Read all users or user by id
+@app.route('/users', methods=['GET'])
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_users(user_id=None):
+    if user_id is None:
+        # consume the service
+        response = get(os.environ['USER_SERVICE']+'/api/v1/users')
+        return jsonify(response.json()), response.status_code
+    else:
+        # consume the service
+        response = get(os.environ['USER_SERVICE']+f'/api/v1/users/{user_id}')
+        return jsonify(response.json()), response.status_code
+
+# Update a user
+@app.route('/users/update/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.json
+    # consume the service
+    response = put(os.environ['USER_SERVICE']+f'/api/v1/users/update/{user_id}', json=data)
+    return jsonify(response.json()), response.status_code
+
+# Delete a user
+@app.route('/users/delete/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    # consume the service
+    response = delete(os.environ['USER_SERVICE']+f'/api/v1/users/delete/{user_id}')
+    return jsonify(response.json()), response.status_code
+
+# Create a new role
+@app.route('/roles/create', methods=['POST'])
+def create_role():
+    data = request.json
+    # consume the service
+    response = post(os.environ['USER_SERVICE']+'/api/v1/roles/create', json=data)
+    return jsonify(response.json()), response.status_code
+
+# Read all roles or role by id
+@app.route('/roles', methods=['GET'])
+@app.route('/roles/<int:role_id>', methods=['GET'])
+def get_roles(role_id=None):
+    if role_id is None:
+        # consume the service
+        response = get(os.environ['USER_SERVICE']+'/api/v1/roles')
+        return jsonify(response.json()), response.status_code
+    else:
+        # consume the service
+        response = get(os.environ['USER_SERVICE']+f'/api/v1/roles/{role_id}')
+        return jsonify(response.json()), response.status_code
+
+# Update a role
+@app.route('/roles/update/<int:role_id>', methods=['PUT'])
+def update_role(role_id):
+    data = request.json
+    # consume the service
+    response = put(os.environ['USER_SERVICE']+f'/api/v1/roles/update/{role_id}', json=data)
+    return jsonify(response.json()), response.status_code
+
+# Delete a role
+@app.route('/roles/delete/<int:role_id>', methods=['DELETE'])
+def delete_role(role_id):
+    # consume the service
+    response = delete(os.environ['USER_SERVICE']+f'/api/v1/roles/delete/{role_id}')
+    return jsonify(response.json()), response.status_code
+
+# mail endpoints --------
+
 # program execution -------->
 if __name__ == "__main__":
     app.run(debug=True, port=6789)
