@@ -1,7 +1,8 @@
 # dependencies -------->
+from requests import post, get, put, delete
 from flask import Flask, jsonify
 from dotenv import load_dotenv
-from requests import post, get, put, delete
+from flask_cors import CORS
 import os
 
 # program initialization -------->
@@ -9,6 +10,7 @@ load_dotenv()
 
 # program variables -------->
 app = Flask(__name__)
+CORS(app)
 
 # end points -------->
 # authentication endpoints --------
