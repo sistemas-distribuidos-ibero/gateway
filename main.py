@@ -235,6 +235,33 @@ def delete_role(role_id):
     return jsonify(response.json()), response.status_code
 
 # mail endpoints --------
+@app.route('/sendVerification', methods=['POST'])
+def send_verification():
+    data = request.json
+    # consume the service
+    response = post(os.environ['EMAIL_SERVICE']+'/sendVerification', json=data)
+    return jsonify(response.json()), response.status_code
+
+@app.route('/sendPasswordChange', methods=['POST'])
+def send_passwd_change():
+    data = request.json
+    # consume the service
+    response = post(os.environ['EMAIL_SERVICE']+'/sendPasswordChange', json=data)
+    return jsonify(response.json()), response.status_code
+
+@app.route('/sendAccountConfirmation', methods=['POST'])
+def send_account_conf():
+    data = request.json
+    # consume the service
+    response = post(os.environ['EMAIL_SERVICE']+'/sendAccountConfirmation', json=data)
+    return jsonify(response.json()), response.status_code
+
+@app.route('/sendOrderConfirmation', methods=['POST'])
+def send_order_conf():
+    data = request.json
+    # consume the service
+    response = post(os.environ['EMAIL_SERVICE']+'/sendOrderConfirmation', json=data)
+    return jsonify(response.json()), response.status_code
 
 # program execution -------->
 if __name__ == "__main__":
