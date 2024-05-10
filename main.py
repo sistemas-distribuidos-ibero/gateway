@@ -95,7 +95,6 @@ def get_products(page):
     response = get(os.environ['PRODUCT_SERVICE']+f'/api/v1/products/{page}')
     return response.json(), response.status_code
 
-
 @app.route('/products', methods=['POST'])
 def create_product():
     data = request.json
@@ -264,6 +263,37 @@ def send_order_conf():
     # consume the service
     response = post(os.environ['EMAIL_SERVICE']+'/sendOrderConfirmation', json=data)
     return response.json(), response.status_code
+
+# special endpoints --------
+@app.route('/buy/<int:user_id>', methods=['POST'])
+def buy(user_id):
+    # local variables
+    index_url = request.json['index_url']
+    products = []
+    temp = {}
+    try:
+        # get user data
+        # consume the service
+        user_data = get(os.environ['USER_SERVICE']+f'/api/v1/users/{user_id}').json()
+        # consume the service
+        response = get(os.environ['CART_SERVICE']+'/cart', json={'user_id' : user_id}).json()
+        # dictionary list [{}]
+        # item is the key for the product id
+        # quantity is the key for the quantity of the product
+        for key in response.keys():
+            # key is the item and the item is the quantity 
+            temp['id_producto'] = key
+            temp['cantidad'] = response[key]
+            products.append(temp)
+            temp = {}
+        # generate order and retrieve order_id
+        response = post(os.environ['ORDERS_SERVICE']+'/orders', json={'id_usuario' : user_id, 'productos' : products})
+        order_id = response.json()['order_id']
+        # send order confirmation
+        response = post(os.environ['EMAIL_SERVICE']+'/sendOrderConfirmation', json={'email' : user_data['email'], 'nombreUsuario' : user_data['name'], 'idOrden' : order_id, 'index_url' : index_url})
+        return "Successful Transaction", 200
+    except Exception as e:
+        return e.message, 400
 
 # program execution -------->
 if __name__ == "__main__":
