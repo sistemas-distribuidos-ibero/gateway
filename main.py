@@ -297,7 +297,36 @@ def buy(user_id):
     
 @app.route('/cart/add', methods=['POST'])
 def add_product_to_cart():
-    pass
+    # local variables
+    count = 0
+    data = request.json
+    # consume the service
+    response = get(os.environ['CART_SERVICE']+'/cart', json=data).json()
+    if data['item_id'] in response.keys():
+        # get total quantity
+        count = data['quantity'] + response[data['item_id']]
+        # delete the previous data of the product
+        response = post(os.environ['CART_SERVICE']+'/cart', json={'item_id' : data['item_id'], 'quantity' : 0, 'user_id' : data['user_id']})
+        # update the product in the db
+        response = post(os.environ['CART_SERVICE']+'/cart', json={'item_id' : data['item_id'], 'quantity' : count, 'user_id' : data['user_id']})
+        return response.json()
+    else:
+        # add the product in the db
+        response = post(os.environ['CART_SERVICE']+'/cart', json={'item_id' : data['item_id'], 'quantity' : data['quantity'], 'user_id' : data['user_id']})
+        return response.json()
+
+@app.route('/users/add', methods=['POST'])
+def add_user():
+    # local variables
+    user = 0
+    data = request.json
+    # consume the service
+    response = post(os.environ['USER_SERVICE']+'/api/v1/users/create', json=data).json()
+    # get user
+    user = response['user']
+    # send confirmation mail
+    response = post(os.environ['EMAIL_SERVICE']+'/sendAccountConfirmation', json={'email' : user['email'], 'nombreUsuario' : user['name'], 'index_url' : data['index_url']})
+    return response.json(), response.status_code
 
 # program execution -------->
 if __name__ == "__main__":
