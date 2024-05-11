@@ -294,7 +294,11 @@ def buy(user_id):
         return "Successful Transaction", 200
     except Exception as e:
         return e.message, 400
+    
+@app.route('/cart/add', methods=['POST'])
+def add_product_to_cart():
+    pass
 
 # program execution -------->
 if __name__ == "__main__":
-    app.run(debug=True, port=6789)
+    app.run(debug=True, host='0.0.0.0', port=6789)
