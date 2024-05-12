@@ -1,6 +1,6 @@
 # dependencies -------->
 from requests import post, get, put, delete
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
