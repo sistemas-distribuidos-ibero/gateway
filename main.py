@@ -328,6 +328,34 @@ def add_user():
     response = post(os.environ['EMAIL_SERVICE']+'/sendAccountConfirmation', json={'email' : user['email'], 'nombreUsuario' : user['name'], 'index_url' : data['index_url']})
     return response.json(), response.status_code
 
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment():
+    try:
+        stripe_keys = {
+            "secret_key": os.getenv("STRIPE_SECRET_KEY"),
+            "publishable_key": os.getenv("STRIPE_PUBLISHABLE_KEY"),
+        }
+
+        stripe.api_key = stripe_keys["secret_key"]
+
+        data = request.get_json()
+
+        intent = stripe.PaymentIntent.create(
+            amount=data['amount'] * 100,
+            currency='usd',
+            automatic_payment_methods={
+                'enabled': True,
+            },
+            metadata={'customer': data['customer']}
+        )
+
+        return ({
+            'clientSecret': intent['client_secret']
+        })
+
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
 # program execution -------->
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=6789)
