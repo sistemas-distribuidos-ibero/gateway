@@ -100,7 +100,7 @@ def get_products(page):
 def create_product():
     data = request.json
     # consume the service
-    response = post(os.environ['PRODUCT_SERVICE']+'/api/v1/products/', json=data)
+    response = post(os.environ['PRODUCT_SERVICE']+'/api/v1/products', json=data)
     return response.json(), response.status_code
 
 @app.route('/products/<string:product_id>', methods=['GET'])
