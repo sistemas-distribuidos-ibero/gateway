@@ -74,11 +74,11 @@ def add_to_cart():
     response = post(os.environ['CART_SERVICE']+'/cart', json=data)
     return response.json(), response.status_code
 
-@app.route('/cart', methods=['GET'])
+@app.route('/get_cart', methods=['POST'])
 def get_cart():
     data = request.json
     # consume the service
-    response = get(os.environ['CART_SERVICE']+'/cart', json=data)
+    response = post(os.environ['CART_SERVICE']+'/get-cart', json=data)
     return response.json(), response.status_code
 
 @app.route('/cart', methods=['DELETE'])
@@ -277,7 +277,7 @@ def buy(user_id):
         # consume the service
         user_data = get(os.environ['USER_SERVICE']+f'/api/v1/users/{user_id}').json()
         # consume the service
-        response = get(os.environ['CART_SERVICE']+'/cart', json={'user_id' : user_id}).json()
+        response = post(os.environ['CART_SERVICE']+'/get-cart', json={'user_id' : user_id}).json()
         # dictionary list [{}]
         # item is the key for the product id
         # quantity is the key for the quantity of the product
