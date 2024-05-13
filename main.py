@@ -302,7 +302,7 @@ def add_product_to_cart():
     count = 0
     data = request.json
     # consume the service
-    response = get(os.environ['CART_SERVICE']+'/cart', json=data).json()
+    response = post(os.environ['CART_SERVICE']+'/get-cart', json=data).json()
     if data['item_id'] in response.keys():
         # get total quantity
         count = data['quantity'] + response[data['item_id']]
