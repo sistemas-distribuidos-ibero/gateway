@@ -81,11 +81,10 @@ def get_cart():
     response = post(os.environ['CART_SERVICE']+'/get-cart', json=data)
     return response.json(), response.status_code
 
-@app.route('/cart', methods=['DELETE'])
-def del_cart():
-    data = request.json
+@app.route('/cart/<int:user_id>', methods=['DELETE'])
+def del_cart(user_id):
     # consume the service
-    response = delete(os.environ['CART_SERVICE']+'/cart', json=data)
+    response = delete(os.environ['CART_SERVICE']+f'/cart/{user_id}')
     return response.json(), response.status_code
 
 # products endpoints --------
@@ -283,18 +282,19 @@ def buy(user_id):
         # quantity is the key for the quantity of the product
         for key in response.keys():
             # key is the item and the item is the quantity 
-            temp['id_producto'] = key
-            temp['cantidad'] = response[key]
+            temp['product_id'] = key
+            temp['quantity'] = response[key]
             products.append(temp)
             temp = {}
         # generate order and retrieve order_id
-        response = post(os.environ['ORDERS_SERVICE']+'/orders', json={'id_usuario' : user_id, 'productos' : products})
+        response = post(os.environ['ORDERS_SERVICE']+'/orders', json={'user_id' : user_id, 'products' : products, 'price': 1})
         order_id = response.json()['order_id']
+
         # send order confirmation
-        response = post(os.environ['EMAIL_SERVICE']+'/sendOrderConfirmation', json={'email' : user_data['email'], 'nombreUsuario' : user_data['name'], 'idOrden' : order_id, 'index_url' : index_url})
-        return "Successful Transaction", 200
+        # response = post(os.environ['EMAIL_SERVICE']+'/sendOrderConfirmation', json={'email' : user_data['email'], 'nombreUsuario' : user_data['name'], 'idOrden' : order_id, 'index_url' : index_url})
+        return jsonify({'message': "Successful Transaction", 'order_id' : order_id}), 200
     except Exception as e:
-        return e.message, 400
+        return str(e), 400
     
 @app.route('/cart/add', methods=['POST'])
 def add_product_to_cart():
