@@ -305,7 +305,7 @@ def add_product_to_cart():
     response = post(os.environ['CART_SERVICE']+'/get-cart', json=data).json()
     if data['item_id'] in response.keys():
         # get total quantity
-        count = data['quantity'] + response[data['item_id']]
+        count = data['quantity']
         # delete the previous data of the product
         response = post(os.environ['CART_SERVICE']+'/cart', json={'item_id' : data['item_id'], 'quantity' : 0, 'user_id' : data['user_id']})
         # update the product in the db
